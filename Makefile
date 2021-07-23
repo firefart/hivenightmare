@@ -6,5 +6,5 @@ current:
 
 .PHONY: release
 release:
-	mkdir release
+	mkdir -p release
 	GOOS=windows CGO_ENABLED=0 go build -o release/hive.exe .

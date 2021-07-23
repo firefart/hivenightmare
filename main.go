@@ -29,7 +29,7 @@ func processFile(path string) ([]byte, time.Time, error) {
 	return content, info.ModTime(), nil
 }
 
-func checkFile(path string) ([]byte, time.Time) {
+func checkFile(friendlyname, path string) ([]byte, time.Time, error) {
 	var lastmodify time.Time
 	var content []byte
 	for i := 1; i <= 20; i++ {
@@ -44,28 +44,43 @@ func checkFile(path string) ([]byte, time.Time) {
 			content = fileContent
 		}
 	}
-	return content, lastmodify
+	if content == nil || len(content) == 0 {
+		return nil, time.Now(), fmt.Errorf("could not detect a copy of %s in a shadow copy. Maybe the system is already patched or there are no shaow copies", friendlyname)
+	}
+	return content, lastmodify, nil
 }
 
 func main() {
-	content, lastMod := checkFile(`Windows\System32\config\SAM`)
-	filename := fmt.Sprintf("hive_sam_%s", lastMod.Format(timeFormat))
-	if err := ioutil.WriteFile(filename, content, 0644); err != nil {
-		fmt.Printf("could not write %s: %v\n", filename, err)
+	content, lastMod, err := checkFile("SAM", `Windows\System32\config\SAM`)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		filename := fmt.Sprintf("hive_sam_%s", lastMod.Format(timeFormat))
+		if err := ioutil.WriteFile(filename, content, 0644); err != nil {
+			fmt.Printf("could not write %s: %v\n", filename, err)
+		}
+		fmt.Printf("Saved a copy of SAM to %s with last modify date of %s\n", filename, lastMod)
 	}
-	fmt.Printf("Saved a copy of SAM to %s with last modify date of %s\n", filename, lastMod)
 
-	content, lastMod = checkFile(`Windows\System32\config\SECURITY`)
-	filename = fmt.Sprintf("hive_security_%s", lastMod.Format(timeFormat))
-	if err := ioutil.WriteFile(filename, content, 0644); err != nil {
-		fmt.Printf("could not write %s: %v\n", filename, err)
+	content, lastMod, err = checkFile("SECURITY", `Windows\System32\config\SECURITY`)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		filename := fmt.Sprintf("hive_security_%s", lastMod.Format(timeFormat))
+		if err := ioutil.WriteFile(filename, content, 0644); err != nil {
+			fmt.Printf("could not write %s: %v\n", filename, err)
+		}
+		fmt.Printf("Saved a copy of SECURITY to %s with last modify date of %s\n", filename, lastMod)
 	}
-	fmt.Printf("Saved a copy of SECURITY to %s with last modify date of %s\n", filename, lastMod)
 
-	content, lastMod = checkFile(`Windows\System32\config\SYSTEM`)
-	filename = fmt.Sprintf("hive_system_%s", lastMod.Format(timeFormat))
-	if err := ioutil.WriteFile(filename, content, 0644); err != nil {
-		fmt.Printf("could not write %s: %v\n", filename, err)
+	content, lastMod, err = checkFile("SYSTEM", `Windows\System32\config\SYSTEM`)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		filename := fmt.Sprintf("hive_system_%s", lastMod.Format(timeFormat))
+		if err := ioutil.WriteFile(filename, content, 0644); err != nil {
+			fmt.Printf("could not write %s: %v\n", filename, err)
+		}
+		fmt.Printf("Saved a copy of SYSTEM to %s with last modify date of %s\n", filename, lastMod)
 	}
-	fmt.Printf("Saved a copy of SYSTEM to %s with last modify date of %s\n", filename, lastMod)
 }
