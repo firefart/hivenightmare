@@ -45,7 +45,7 @@ func checkFile(friendlyname, path string) ([]byte, time.Time, error) {
 		}
 	}
 	if content == nil || len(content) == 0 {
-		return nil, time.Now(), fmt.Errorf("could not detect a copy of %s in a shadow copy. Maybe the system is already patched or there are no shaow copies", friendlyname)
+		return nil, time.Now(), fmt.Errorf("could not detect a copy of %s in a shadow copy. Maybe the system is already patched or there are no shadow copies", friendlyname)
 	}
 	return content, lastmodify, nil
 }
