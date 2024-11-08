@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"time"
 )
@@ -22,7 +21,7 @@ func processFile(path string) ([]byte, time.Time, error) {
 	if err != nil {
 		return nil, time.Now(), fmt.Errorf("error getting file info: %+v", err)
 	}
-	content, err := ioutil.ReadFile(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		return nil, time.Now(), fmt.Errorf("error reading file content: %+v", err)
 	}
@@ -56,7 +55,7 @@ func main() {
 		fmt.Println(err)
 	} else {
 		filename := fmt.Sprintf("hive_sam_%s", lastMod.Format(timeFormat))
-		if err := ioutil.WriteFile(filename, content, 0644); err != nil {
+		if err := os.WriteFile(filename, content, 0o644); err != nil {
 			fmt.Printf("could not write %s: %v\n", filename, err)
 		}
 		fmt.Printf("Saved a copy of SAM to %s with last modify date of %s\n", filename, lastMod)
@@ -67,7 +66,7 @@ func main() {
 		fmt.Println(err)
 	} else {
 		filename := fmt.Sprintf("hive_security_%s", lastMod.Format(timeFormat))
-		if err := ioutil.WriteFile(filename, content, 0644); err != nil {
+		if err := os.WriteFile(filename, content, 0o644); err != nil {
 			fmt.Printf("could not write %s: %v\n", filename, err)
 		}
 		fmt.Printf("Saved a copy of SECURITY to %s with last modify date of %s\n", filename, lastMod)
@@ -78,7 +77,7 @@ func main() {
 		fmt.Println(err)
 	} else {
 		filename := fmt.Sprintf("hive_system_%s", lastMod.Format(timeFormat))
-		if err := ioutil.WriteFile(filename, content, 0644); err != nil {
+		if err := os.WriteFile(filename, content, 0o644); err != nil {
 			fmt.Printf("could not write %s: %v\n", filename, err)
 		}
 		fmt.Printf("Saved a copy of SYSTEM to %s with last modify date of %s\n", filename, lastMod)
